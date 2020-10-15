@@ -38,7 +38,7 @@ if __name__ == '__main__':
     truth = loader.get_truth("truth.csv")
     
     error = estimations[:3] - truth[:3]
-    P_inv = inv(info_mat[:3, :3])
+    P_inv = info_mat[:3, :3]
     
     print("ANEES:",np.average(error.T @ P_inv @ error))
     
