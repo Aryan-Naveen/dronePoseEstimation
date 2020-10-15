@@ -16,6 +16,8 @@ class DataLoader():
     def __init__(self, file_name):
         file = open(file_name, 'r')
         self.data = file.read().splitlines()
+        self.total_inputs = int((len(self.data)+2)/16)
+        print(self.total_inputs)
     
     def get_next_timestep(self):
         curr_time = float(self.data[1].split(',')[0])
@@ -44,3 +46,18 @@ class DataLoader():
 
     def __truncate(self):
         self.data = self.data[16:]
+    
+    def get_number_time_stamps(self):
+        return self.total_inputs
+    
+    def get_truth(self, path):
+        file = open(path, 'r')
+        file_data = file.read().splitlines()
+        file_data.pop(1)
+        file_data.pop(2)
+        file_data.pop(3)
+        truth = []
+        for line in file_data:
+            vals = line.split(',')
+            truth.append([float(val) for val in vals[:-1]])
+        return np.array(truth)
