@@ -27,5 +27,8 @@ class Data():
     def getDeltaTime(self):
         return self.curr - self.prev
     
+    def getTimes(self):
+        return self.curr, self.prev
+    
     def getAverageTime(self):
         return (self.curr+self.prev)/2

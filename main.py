@@ -12,14 +12,17 @@ def pinv(H, y):
 
 fusion_techniques = ["bayesian", "ellipsoidal", "covariance intersection", "inverse covariance intersection", "probablistic consistent"]
 if __name__ == '__main__':
-    loader = DataLoader('data/data.csv')
+    loader = DataLoader('data/currT_PrevT_Y_H_campus_noinflation.csv')
     technique = int(input("Which fusion technique to use? (0 - bayesian, 1 - ei, 2 - ci, 3 - ici, 4 - pc)"))
     fusion = Data_fusion(technique)
-    truth = loader.get_truth('data/truth.csv')
+    truth = loader.get_truth('data/ref_time_campus.csv')
     anees = []
+    times = []
     estimations = np.zeros((6, loader.get_number_time_stamps()))
     for t in tqdm(range(loader.get_number_time_stamps())):
         data = loader.get_next_timestep()
+        curr, prev = data.getTimes()
+        times.append([curr, prev])
         info_mat, info_vec = getInitialInformationMatrix(data)
 
         while not data.completed():
@@ -36,10 +39,10 @@ if __name__ == '__main__':
 
     
     
-    print("ANEES:",np.average(anees))    
         
     time = truth[3]
-    print(time.shape)
+    
+    times = np.array(times)
     
     error = estimations[:3] - truth[:3]
     
@@ -49,4 +52,5 @@ if __name__ == '__main__':
     
     np.savetxt("results/errorCsv/"+str(fusion_techniques[technique])+".csv", error, delimiter=",")
     np.savetxt("results/errorCsv/"+str(fusion_techniques[technique])+"_std_dev.csv", covariances, delimiter=",")
-    
+    np.savetxt("results/errorCsv/"+str(fusion_techniques[technique])+"_computed_vel.csv", estimations[:3], delimiter=",")
+    np.savetxt("results/Velocities/time.csv", times, delimiter=",")
